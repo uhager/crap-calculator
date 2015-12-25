@@ -1,0 +1,12 @@
+?? part of crap
+?? author: Ulrike Hager
+?? default trap frequency and timing calibration
+trap1_isotope:98mo?
+trap2_isotope:88rb?
+timing1_isotope:88rb?
+timing2_isotope:88rb?
+trap1_frequency:1097567.00?
+trap2_frequency:1222225.50?
+trap3_frequency:180?
+time1:142?
+time2:57.8?
