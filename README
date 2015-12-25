@@ -2,3 +2,4 @@ crap was developed for use with the JYFLTRAP Penning traps. It identifies contam
 In addition, it can calculate transfer times between the traps for different masses. It also calculates frequencies for cabon clusters from the carbon cluster source.
 default.dat loads the default settings based on prior trap calibrations. You can save different settings using the 'Remember' button.
 nubtab03.asc is from the AMDC http://amdc.in2p3.fr/nubase/filel.html, stable.asc is based on nubtab03 but limited to stable species to reduce calculation time when rare-isotope contamination is unlikely.
+Requires gtkmm-2.4.
