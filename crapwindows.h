@@ -15,9 +15,10 @@
 
 class CrapWindow : public Gtk::TreeView
 {
+  friend class MainWindow;
  public:
   CrapWindow();
-  virtual ~CrapWindow();
+  virtual ~CrapWindow(){};
 
  protected:
   virtual bool on_button_press_event(GdkEventButton *ev);
@@ -36,14 +37,14 @@ class CrapWindow : public Gtk::TreeView
   CrapColumns c_Columns;
   Glib::RefPtr<Gtk::ListStore> c_refTreeModel;
   Gtk::Menu m_Menu_Popup;
-  friend class MainWindow;
 };
 
 class AttackWindow : public Gtk::TreeView
 {
+  friend class MainWindow;
  public:
   AttackWindow();
-  virtual ~AttackWindow();
+  virtual ~AttackWindow(){};
 
  protected:
   // Override Signal handler:
@@ -71,7 +72,6 @@ class AttackWindow : public Gtk::TreeView
   AttackColumns a_Columns;
   Glib::RefPtr<Gtk::ListStore> a_refTreeModel;
   Gtk::Menu m_Menu_Popup;
-  friend class MainWindow;
 };
 
 
@@ -81,7 +81,7 @@ class MainWindow : public Gtk::Window
 
  public:
   MainWindow();
-  virtual ~MainWindow();
+  virtual ~MainWindow(){};
 
  protected:
   virtual void crap_button_clicked(int);
@@ -167,7 +167,9 @@ class MainWindow : public Gtk::Window
   string file1;
   string file2;
 
-
+ private:
+  MainWindow( const MainWindow& );
+  MainWindow& operator=( const MainWindow& );
 
 };
 

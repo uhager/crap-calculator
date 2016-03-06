@@ -51,8 +51,8 @@ void CIsotope::unmake_name(string n)
   size_t t = n.find_last_of("1234567890");
   size_t u = n.find_first_not_of("1234567890");
   size_t v = n.find_last_not_of("1234567890");
-	  A = atoi(n.substr(s,t-s+1).c_str());
-	  elem = n.substr(u,v-u+1);
+  A = atoi(n.substr(s,t-s+1).c_str());
+  elem = n.substr(u,v-u+1);
 }
 
 double CIsotope::calc_freq(CRef cref)
@@ -116,48 +116,48 @@ void CMolecule::unmake_mol(string mol)
   if (mol.size()==0) return;
   size_t s = 0;
   size_t t = 0;
-do
-  {
-  mol = mol.substr(s,mol.size()-s);
-  s = mol.find_first_not_of("1234567890");
-  if (s==string::npos)
-  {
+  do
+    {
+      mol = mol.substr(s,mol.size()-s);
+      s = mol.find_first_not_of("1234567890");
+      if (s==string::npos)
+	{
 	  cref.push_back(atoi(mol.c_str()));
 	  cref[cref.size()-1].set_elem("StupidUsers");
-  cref[cref.size()-1].name = cref[cref.size()-1].get_name();
-  cref[cref.size()-1].read_ame();
+	  cref[cref.size()-1].name = cref[cref.size()-1].get_name();
+	  cref[cref.size()-1].read_ame();
 	  break;
-	  }
-  t = mol.size();
-  int tempA = atoi(mol.substr(0,s).c_str());
-//try
-//{
-  mol = mol.substr(s,t-s);
-  s = mol.find_first_of("1234567890");
-  string tempelem = mol.substr(0,s);
-  cref.push_back(tempA);
-  cref[cref.size()-1].set_elem(tempelem);
-  cref[cref.size()-1].name = cref[cref.size()-1].get_name();
-  cref[cref.size()-1].read_ame();
-//}
-/*  catch(...)
-  {
+	}
+      t = mol.size();
+      int tempA = atoi(mol.substr(0,s).c_str());
+      //try
+      //{
+      mol = mol.substr(s,t-s);
+      s = mol.find_first_of("1234567890");
+      string tempelem = mol.substr(0,s);
+      cref.push_back(tempA);
+      cref[cref.size()-1].set_elem(tempelem);
+      cref[cref.size()-1].name = cref[cref.size()-1].get_name();
+      cref[cref.size()-1].read_ame();
+      //}
+      /*  catch(...)
+	  {
 	  cref.push_back(atoi(mol.c_str()));
 	  cref[cref.size()-1].set_elem("StupidUsers");
-  cref[cref.size()-1].name = cref[cref.size()-1].get_name();
-  cref[cref.size()-1].read_ame();
+	  cref[cref.size()-1].name = cref[cref.size()-1].get_name();
+	  cref[cref.size()-1].read_ame();
 	  break;
 	  }*/
-  // cout << tempA << "\t" << tempelem << endl;
-  } while ( s != string::npos);
+      // cout << tempA << "\t" << tempelem << endl;
+    } while ( s != string::npos);
 }
 
 void CMolecule::cluster(int size)
 {
-	mass = size*12*AMU;
-	char csize[64];
-	sprintf(csize,"%dxC12",size);
-	name = csize;
+  mass = size*12*AMU;
+  char csize[64];
+  sprintf(csize,"%dxC12",size);
+  name = csize;
 }
 
 void CRef::make_ref(string filename)

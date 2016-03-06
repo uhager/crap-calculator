@@ -26,10 +26,13 @@ class CIsotope
   string elem;
   double mass;
   double ME;
+
  public:
   CIsotope(){}
   CIsotope(string row){make_isotope(row);}
   CIsotope(string el, int a, double me){set_elem(el);set_A(a);set_ME(me);set_mass(a * AMU + me);}
+  CIsotope operator= (CIsotope isotope);
+
   void make_isotope(string);
   void set_mass(double m) {mass=m;}
   void set_ME(double m) {ME=m;}
@@ -39,7 +42,6 @@ class CIsotope
   double get_mass(){return mass;}
   double get_ME(){return ME;}
   int get_A(){return A;}
-  CIsotope operator= (CIsotope isotope);
   string get_name();
   void unmake_name(string);
   double calc_freq(CRef);
@@ -47,6 +49,8 @@ class CIsotope
 
 class CRef : public CIsotope
 {
+  friend class CMolecule;
+
   string name;
   double freq;
  public:
@@ -61,19 +65,21 @@ class CRef : public CIsotope
   void set_freq(double f){freq=f;}
   double get_freq(){return freq;}
   void make_ref(string);
-  friend class CMolecule;
 };
 
 
-class CRead{
-  string filename;
-  int lines;
+class CRead
+{
  public:
+  CRead(string fn){filename=fn;count_lines();}
+  CRead(){}
   void count_lines();
   string read_line(int);
   int get_lines(){return lines;}
-  CRead(string fn){filename=fn;count_lines();}
-  CRead(){}
+
+ private:
+  string filename;
+  int lines;
 };
 
 class CMolecule {
@@ -82,12 +88,12 @@ class CMolecule {
   double mass;
   //  double freq;
  public:
-  CMolecule() : name(""),mass(0){}
+ CMolecule() : name(""),mass(0){}
+  CMolecule operator+ (CIsotope isotope);
     //  CMolecule () {}
-    CMolecule operator= (CMolecule molecule);
+  CMolecule operator= (CMolecule molecule);
     double get_mass(){return mass;}
     double get_freq(CRef cref, int charge);
-    CMolecule operator+ (CIsotope isotope);
     void unmake_mol(string);
     string get_name(){return name;}
     int num(){return cref.size();}
@@ -107,6 +113,7 @@ class CCont
   double mass_lower;
   double mass_higher;
   double A_limit;
+
  public:
   CCont(){}
   CCont(double cont, double er, int num,int charge):
@@ -131,6 +138,7 @@ class CTable : public CIsotope
   string filename;
   vector<CIsotope> isotope;
   int linecount;
+
  public:
   CTable(): high_limit(257),filename("stable.asc"),linecount(0){}
 	CTable(int stable): high_limit(257),filename("stable.asc"),linecount(0){make_table(stable);}
@@ -155,6 +163,7 @@ class CCalibrate
   CRef timing2;
   double time1;
   double time2;
+
  public:
   CCalibrate(){}
   CCalibrate(string iso1, string iso2, string iso3, string iso4, double f1, double f2, double t1, double t2):
