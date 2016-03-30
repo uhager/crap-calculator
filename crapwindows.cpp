@@ -1,8 +1,14 @@
 // part of crap
 // author: Ulrike Hager
 
-#include "crapwindows.h"
 #include <iostream>
+#include <fstream>
+#include <iomanip>
+
+#include "crapwindows.h"
+
+using std::string;
+using std::vector;
 
 int global_stop=0;
 
@@ -273,7 +279,7 @@ void MainWindow::crap_button_clicked(int i)
 
 void MainWindow::on_button_close()
 {
-  std::cout << "Have a nice day!" << std::endl;
+  std::cout << "Have a nice day!\n";
   hide();
 }
 
@@ -395,9 +401,9 @@ void MainWindow::file2_button_clicked()
 
 void MainWindow::read_default()
 {
-  ifstream xfile;
+  std::ifstream xfile;
   xfile.open("default.dat");
-  if (!xfile){cout << "could not read default\n"; exit(0);}
+  if (!xfile){std::cout << "could not read default\n"; exit(0);}
   while(!xfile.eof()){
     string row;
     getline(xfile,row);
@@ -423,47 +429,46 @@ void MainWindow::read_default()
 void MainWindow::write_default()
 {
   char buffer[64];
-  ofstream xfile;
+  std::ofstream xfile;
   xfile.open("default.dat");
-  if (!xfile){cout << "could not write default\n"; exit(0);}
-  xfile << "trap1_isotope:" << elem1_Entry.get_text() << "?" << endl; 
-  xfile << "trap2_isotope:" << elem2_Entry.get_text() << "?" << endl; 
-  xfile << "timing1_isotope:" << timeelem1_Entry.get_text() << "?" << endl;
-  xfile << "timing2_isotope:" << timeelem2_Entry.get_text() << "?" << endl;
+  if (!xfile){std::cout << "could not write default\n"; exit(0);}
+  xfile << "trap1_isotope:" << elem1_Entry.get_text() << "?\n"; 
+  xfile << "trap2_isotope:" << elem2_Entry.get_text() << "?\n" ; 
+  xfile << "timing1_isotope:" << timeelem1_Entry.get_text() << "?\n";
+  xfile << "timing2_isotope:" << timeelem2_Entry.get_text() << "?\n";
   sprintf(buffer,"%.2f",freq1_button.get_value());
-  xfile << "trap1_frequency:" << buffer << "?" << endl; 
+  xfile << "trap1_frequency:" << buffer << "?\n"; 
   sprintf(buffer,"%.2f",freq2_button.get_value());
-  xfile << "trap2_frequency:" << buffer << "?" << endl; 
+  xfile << "trap2_frequency:" << buffer << "?\n"; 
   sprintf(buffer,"%f",freq3_button.get_value());
-  xfile << "trap3_frequency:" << buffer << "?" << endl;
-  xfile << "time1:" << time1_button.get_value() << "?" << endl;
-  xfile << "time2:" << time2_button.get_value() << "?" << endl; 
+  xfile << "trap3_frequency:" << buffer << "?\n";
+  xfile << "time1:" << time1_button.get_value() << "?\n";
+  xfile << "time2:" << time2_button.get_value() << "?\n"; 
   xfile.close();
 }
 
 int MainWindow::attack(string iso1,string iso2, string iso3, string iso4, double f1, double f2, double t1, double t2, string c, int charge, int fout )
 {
-  //  cout << "using calibration file\n";
+  //  std::cout << "using calibration file\n";
   CCalibrate ccalib(iso1,iso2, iso3, iso4, f1, f2, t1, t2);
   CMolecule moly;
   Gtk::TreeModel::Row row;
   moly.unmake_mol(c);
   for (int i=0;i<moly.num();i++)
     {
-      CIsotope *iso = &moly.get_ref(i);
-      if (iso->get_mass()==0)
+      CIsotope& iso = moly.get_ref(i);
+      if (iso.get_mass()==0)
 	{
 	  row = *(a_TreeView.a_refTreeModel->append());
-	  row[a_TreeView.a_Columns.m_col_mol] =  iso->get_name()+ " !?";
+	  row[a_TreeView.a_Columns.m_col_mol] =  iso.get_name()+ " !?";
 	  row[a_TreeView.a_Columns.m_col_freq1] =  "Wow! ";
 	  row[a_TreeView.a_Columns.m_col_freq2] =  "Very exotic...";
-
 	  return(0);
 	}
 
-      moly = moly + *iso;
+      moly = moly + iso;
     }
-  //  cout << isotope.get_mass() << "\t" <<isotope.get_ME() << "\t"<< isotope.get_A() << "\t" << ccalib.get_trap1().get_mass()<< endl ;
+  //  std::cout << isotope.get_mass() << "\t" <<isotope.get_ME() << "\t"<< isotope.get_A() << "\t" << ccalib.get_trap1().get_mass()<< std::endl ;
   double temp1 = sqrt(moly.get_mass()/(ccalib.get_timing1().get_mass()*charge))*ccalib.get_time1();
   double temp2 = sqrt(moly.get_mass()/(ccalib.get_timing2().get_mass()*charge))*ccalib.get_time2();
   char tempc1[64],tempc2[64],tempc3[64],tempc4[64],tempc5[64] ;
@@ -473,15 +478,15 @@ int MainWindow::attack(string iso1,string iso2, string iso3, string iso4, double
   sprintf(tempc4,"%.3f", moly.get_freq(ccalib.get_trap2(),charge) );
   double temp5 = atof(tempc4) - freq3_button.get_value();
   sprintf(tempc5,"%.3f",temp5);
-  //  cout << temp5 << "\t" << tempc5 << endl;
+  //  std::cout << temp5 << "\t" << tempc5 << std::endl;
   string temps1 = tempc1;
   string temps2 = tempc2;
   string temps3 = tempc3;
   string temps4 = tempc4;
   string temps5 = tempc5;
-  cout << "frequencies: ";
-  cout << setprecision(12) << moly.get_freq(ccalib.get_trap1(),charge) << "\t" << moly.get_freq(ccalib.get_trap2(),charge) << "\n";
-  cout << "timings: cooler to trap: " << setprecision(4) << temp1 <<  "\tmiddle wall: " << temp2 << "\n";
+  std::cout << "frequencies: ";
+  std::cout << std::setprecision(12) << moly.get_freq(ccalib.get_trap1(),charge) << "\t" << moly.get_freq(ccalib.get_trap2(),charge) << "\n";
+  std::cout << "timings: cooler to trap: " << std::setprecision(4) << temp1 <<  "\tmiddle wall: " << temp2 << "\n";
   row = *(a_TreeView.a_refTreeModel->append());
   row[a_TreeView.a_Columns.m_col_mol] =  c;
   row[a_TreeView.a_Columns.m_col_freq1] =  temps3;
@@ -492,9 +497,9 @@ int MainWindow::attack(string iso1,string iso2, string iso3, string iso4, double
 
   if (fout==1)
     {
-      ofstream xfile;
-      xfile.open(file2.c_str(),ios::app);
-      xfile << c << "\t" <<  setprecision(12) << moly.get_freq(ccalib.get_trap1(),charge) << "\t" << moly.get_freq(ccalib.get_trap2(),charge) << "\t" << temp5 << "\t" << setprecision(4) << temp1 <<  "\t" << temp2 << "\n";
+      std::ofstream xfile;
+      xfile.open(file2.c_str(),std::ios::app);
+      xfile << c << "\t" <<  std::setprecision(12) << moly.get_freq(ccalib.get_trap1(),charge) << "\t" << moly.get_freq(ccalib.get_trap2(),charge) << "\t" << temp5 << "\t" << std::setprecision(4) << temp1 <<  "\t" << temp2 << "\n";
       xfile.close();
     }
 
@@ -503,12 +508,12 @@ int MainWindow::attack(string iso1,string iso2, string iso3, string iso4, double
 
 int MainWindow::cluster(string iso1,string iso2, string iso3, string iso4, double f1, double f2, double t1, double t2, int charge, int size, int fout )
 {
-  //  cout << "using calibration file\n";
+  //  std::cout << "using calibration file\n";
   CCalibrate ccalib(iso1,iso2, iso3, iso4, f1, f2, t1, t2);
   CMolecule moly;
   Gtk::TreeModel::Row row;
   moly.cluster(size);
-  //  cout << isotope.get_mass() << "\t" <<isotope.get_ME() << "\t"<< isotope.get_A() << "\t" << ccalib.get_trap1().get_mass()<< endl ;
+  //  std::cout << isotope.get_mass() << "\t" <<isotope.get_ME() << "\t"<< isotope.get_A() << "\t" << ccalib.get_trap1().get_mass()<< std::endl ;
   double temp1 = sqrt(moly.get_mass()/(ccalib.get_timing1().get_mass())*charge)*ccalib.get_time1();
   double temp2 = sqrt(moly.get_mass()/(ccalib.get_timing2().get_mass())*charge)*ccalib.get_time2();
   char tempc1[64],tempc2[64],tempc3[64],tempc4[64],tempc5[64] ;
@@ -518,15 +523,15 @@ int MainWindow::cluster(string iso1,string iso2, string iso3, string iso4, doubl
   sprintf(tempc4,"%.3f", moly.get_freq(ccalib.get_trap2(),charge) );
   double temp5 = atof(tempc4) - freq3_button.get_value();
   sprintf(tempc5,"%.3f",temp5);
-  //  cout << temp5 << "\t" << tempc5 << endl;
+  //  std::cout << temp5 << "\t" << tempc5 << std::endl;
   string temps1 = tempc1;
   string temps2 = tempc2;
   string temps3 = tempc3;
   string temps4 = tempc4;
   string temps5 = tempc5;
-  cout << "frequencies: ";
-  cout << setprecision(12) << moly.get_freq(ccalib.get_trap1(),charge) << "\t" << moly.get_freq(ccalib.get_trap2(),charge) << "\n";
-  cout << "timings: cooler to trap: " << setprecision(4) << temp1 <<  "\tmiddle wall: " << temp2 << "\n";
+  std::cout << "frequencies: ";
+  std::cout << std::setprecision(12) << moly.get_freq(ccalib.get_trap1(),charge) << "\t" << moly.get_freq(ccalib.get_trap2(),charge) << "\n";
+  std::cout << "timings: cooler to trap: " << std::setprecision(4) << temp1 <<  "\tmiddle wall: " << temp2 << "\n";
   row = *(a_TreeView.a_refTreeModel->append());
   row[a_TreeView.a_Columns.m_col_mol] =  moly.get_name();
   row[a_TreeView.a_Columns.m_col_freq1] =  temps3;
@@ -536,9 +541,9 @@ int MainWindow::cluster(string iso1,string iso2, string iso3, string iso4, doubl
   row[a_TreeView.a_Columns.m_col_time2] =  temps2;
   if (fout==1)
     {
-      ofstream xfile;
-      xfile.open(file2.c_str(),ios::app);
-      xfile << moly.get_name() << "\t" <<  setprecision(12) << moly.get_freq(ccalib.get_trap1(),charge) << "\t" << moly.get_freq(ccalib.get_trap2(),charge) << "\t" << temp5 << "\t" << setprecision(4) << temp1 <<  "\t" << temp2 << "\n";
+      std::ofstream xfile;
+      xfile.open(file2.c_str(),std::ios::app);
+      xfile << moly.get_name() << "\t" <<  std::setprecision(12) << moly.get_freq(ccalib.get_trap1(),charge) << "\t" << moly.get_freq(ccalib.get_trap2(),charge) << "\t" << temp5 << "\t" << std::setprecision(4) << temp1 <<  "\t" << temp2 << "\n";
       xfile.close();
     }
 
@@ -548,19 +553,19 @@ int MainWindow::cluster(string iso1,string iso2, string iso3, string iso4, doubl
 int MainWindow::crap(string el, double f, double cont, double er, int num, int chqrge, int stable, string im, int charge, int fout, int hco)
 {
   CRef cref(el,f);
-  //cout << cref.get_name() << "\t" << cref.get_freq() <<  "\t" << cref.get_A() <<  "\t" << cref.get_ME() <<"\t" << cref.get_mass() << "\n";
+  //std::cout << cref.get_name() << "\t" << cref.get_freq() <<  "\t" << cref.get_A() <<  "\t" << cref.get_ME() <<"\t" << cref.get_mass() << "\n";
   CCont ccont(cont,er,num,charge);
   if (hco==1)   ccont.set_count(100);
   ccont.make_masses(cref);
-  //cout << ccont.get_A_limit() << "\t" << ccont.get_lower() << "\t" << ccont.get_higher() << "\n";
+  //std::cout << ccont.get_A_limit() << "\t" << ccont.get_lower() << "\t" << ccont.get_higher() << "\n";
   CMolecule ini_moly;
   ini_moly.set_null();
 
   ini_moly.unmake_mol(im);
   for (int i=0;i<ini_moly.num();i++)
     {
-      CIsotope *iso = &ini_moly.get_ref(i);
-      ini_moly = ini_moly + *iso;
+      CIsotope& iso = ini_moly.get_ref(i);
+      ini_moly = ini_moly + iso;
     }
   int ini_num;
   if (hco==0) ini_num=ccont.get_count();
@@ -585,7 +590,7 @@ int MainWindow::crap(string el, double f, double cont, double er, int num, int c
       int end_test=0;
       for (int i=0;i<atoms;i++) {ctable.at(i).reset();}
       CMolecule temp_moly = ini_moly;
-      //		cout << "line: " << ctable.at(0).get_line() << "  limit: "ctable.at(0).get_limit() << "  ratio:" << ctable.at(0).get_line()/ctable.at(0).get_limit();
+      //		std::cout << "line: " << ctable.at(0).get_line() << "  limit: "ctable.at(0).get_limit() << "  ratio:" << ctable.at(0).get_line()/ctable.at(0).get_limit();
       while (ctable.at(0).get_line()<ctable.at(0).get_limit())  
 	{
 	  m_ProgressBar.set_fraction(1.0*ctable.at(0).get_line()/(1.0*ctable.at(0).get_limit()));
@@ -596,7 +601,7 @@ int MainWindow::crap(string el, double f, double cont, double er, int num, int c
 	      if (global_stop==1)
 		{
 		  global_stop=0;
-		  cout << "Patience, young Skywalker" << endl;
+		  std::cout << "Stop requested.\n" ;
 		  m_ProgressBar.set_fraction(0.0);
 		  return(0);
 		}
@@ -609,7 +614,7 @@ int MainWindow::crap(string el, double f, double cont, double er, int num, int c
 		  temp_moly.set_mass(molecule.get_mass());
 		  temp_moly.set_name(molecule.get_name());
 		  i_mol=i+1;
-		  //					cout << "temp_moly: " << temp_moly.get_name()<< endl;
+		  //					std::cout << "temp_moly: " << temp_moly.get_name()<< std::endl;
 		}
 	      if ((c==10 && (atoms-i-1)<0.0001) && (((i>0.0001) && ctable.at(i).get_line()<ctable.at(i-1).get_line()) || (i<0.0001)))
 		{
@@ -663,14 +668,14 @@ int MainWindow::crap(string el, double f, double cont, double er, int num, int c
 		string name=ini_moly.get_name()+"O"+cox+"-C"+cca+"-H"+chy;
 		molecule.set_name(name);
 	      }
-	    cout << molecule.get_name() << "\t"<< setprecision(12) << molecule.get_freq(cref,charge) << "\n";
+	    std::cout << molecule.get_name() << "\t"<< std::setprecision(12) << molecule.get_freq(cref,charge) << "\n";
 	    row = *(c_TreeView.c_refTreeModel->append());
 	    row[c_TreeView.c_Columns.m_col_mol] =  molecule.get_name();
 	    row[c_TreeView.c_Columns.m_col_freq] = molecule.get_freq(cref,charge);
 	    if (fout==1) {   
-	      ofstream xfile;
-	      xfile.open(file1.c_str(),ios::app);
-	      xfile << molecule.get_name() << "\t"<< setprecision(12) << molecule.get_freq(cref,charge) << "\n";
+	      std::ofstream xfile;
+	      xfile.open(file1.c_str(),std::ios::app);
+	      xfile << molecule.get_name() << "\t"<< std::setprecision(12) << molecule.get_freq(cref,charge) << "\n";
 	      xfile.close();   
 	    }     
 	  }
@@ -682,20 +687,20 @@ int MainWindow::crap(string el, double f, double cont, double er, int num, int c
       m_ProgressBar.set_fraction(0.0);
     }
   ctable.clear();
-  cout << "...that's all there is\n";
+  std::cout << "...that's all there is\n";
   return(0);
 }
 
 void MainWindow::step_reset(vector<CTable>& table,int i, int count)
 {
-  //	cout << "step_reset" << endl;
+  //	std::cout << "step_reset" << std::endl;
   table.at(i).inc_line();
   for (int k=i+1;k<count;k++) table.at(k).reset();
 }
 
 void MainWindow::step(vector<CTable>& table, int count)
 { 
-  //	cout << "step" << endl;
+  //	std::cout << "step" << std::endl;
   int check = count-1;
   for (int k=count-1;k>0;k--)
     {
@@ -708,7 +713,7 @@ void MainWindow::step(vector<CTable>& table, int count)
 
 void MainWindow::step_check(vector<CTable>& table, int h, int count)
 { 
-  //	cout << "step_check" << endl;
+  //	std::cout << "step_check" << std::endl;
   int check = h;
   for (int k=h;k>0;k--)
     {

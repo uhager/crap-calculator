@@ -2,17 +2,19 @@
 // author: Ulrike Hager
 
 #include <fstream>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <iomanip>
-#include <math.h>
-#include <string.h>
-#include <sstream>
+#include <cmath>
+#include <string>
+
 #include "crapclasses.h"
-using namespace std;
+
 #define AMU 931494.013
 #define M_e 510.998918
+
+using std::string;
+
 
 CIsotope CIsotope::operator= (CIsotope isotope)
 {
@@ -34,7 +36,7 @@ void CIsotope::make_isotope(string row)
   if (s != string::npos) elem.erase(s);
   ME = atof(substr2.c_str());
   mass = A * AMU + ME ;
-  //  cout << elem << A << "\t" << ME << "\t" << mass << "\n";
+  //  std::cout << elem << A << "\t" << ME << "\t" << mass << "\n";
 }
 
 string CIsotope::get_name()
@@ -63,11 +65,11 @@ double CIsotope::calc_freq(CRef cref)
 
 void CRead::count_lines()
 {
-  ifstream xfile;
+  std::ifstream xfile;
   string row;
   int counter = 0;
   xfile.open(filename.c_str());
-  if (!xfile) cout << filename << " could not be opened to count lines\n";
+  if (!xfile) std::cout << filename << " could not be opened to count lines\n";
   while (!xfile.eof())
     {
       getline(xfile,row);
@@ -75,16 +77,16 @@ void CRead::count_lines()
     }
   xfile.close();
   lines = counter-1;
-  //      cout << lines << " lines in " << filename << "\n";
+  //      std::cout << lines << " lines in " << filename << "\n";
 }
 
 
 string CRead::read_line(int linenumber)
 {
-  ifstream xfile;
+  std::ifstream xfile;
   string row;
   xfile.open(filename.c_str());
-  if (!xfile) cout << filename << " could not be opened\n";
+  if (!xfile) std::cout << filename << " could not be opened\n";
   for (int i=0;i<linenumber+1;i++) getline(xfile,row);
   xfile.close();
   return(row);
@@ -148,7 +150,7 @@ void CMolecule::unmake_mol(string mol)
 	  cref[cref.size()-1].read_ame();
 	  break;
 	  }*/
-      // cout << tempA << "\t" << tempelem << endl;
+      // std::cout << tempA << "\t" << tempelem << std::endl;
     } while ( s != string::npos);
 }
 
@@ -162,9 +164,9 @@ void CMolecule::cluster(int size)
 
 void CRef::make_ref(string filename)
 {
-  ifstream xfile;
+  std::ifstream xfile;
   xfile.open(filename.c_str());
-  if (!xfile){cout << "could not read crap\n"; exit(0);}
+  if (!xfile){std::cout << "could not read crap\n"; exit(0);}
   while(!xfile.eof()){
     string row;
     getline(xfile,row);
@@ -185,11 +187,11 @@ void CRef::read_ame()
   string nubtab("nubtab03.asc");
   char fname[256];
   string row;
-  ifstream afile;
+  std::ifstream afile;
   int check =0;
   sprintf(fname,"%s",nubtab.c_str());
   afile.open(fname);
-  if (!afile) {cout << fname << " could not be opened\n"; exit(0);}
+  if (!afile) {std::cout << fname << " could not be opened\n"; exit(0);}
   while (!afile.eof() && check <1)
     {
       getline(afile,row);
@@ -248,6 +250,6 @@ void CTable::ini_isotopes(double limit)
     }while (isotope.at(i-1).get_A()<limit && i<high_limit-1);
 
   high_limit=i-1;
-  // cout << high_limit << "high_limit adjusted\n";
+  // std::cout << high_limit << "high_limit adjusted\n";
 }
 

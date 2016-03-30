@@ -4,6 +4,9 @@
 #ifndef GTKMM_CRAPWINDOWS_H
 #define GTKMM_CRAPWINDOWS_H
 
+#include <string>
+#include <vector>
+
 #include <gtkmm.h>
 #include <gtkmm/button.h>
 #include <gtkmm/window.h>
@@ -11,6 +14,7 @@
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/box.h>
 #include <gtkmm/separator.h>
+
 #include "crapclasses.h"
 
 class CrapWindow : public Gtk::TreeView
@@ -96,12 +100,12 @@ class MainWindow : public Gtk::Window
   virtual void file2_button_clicked();
   void read_default();
   void write_default();
-  int attack(string,string,string,string,double,double,double,double,string,int,int);
-  int cluster(string,string,string,string,double,double,double,double,int,int,int);
-  int crap(string, double, double, double, int, int, int, string, int, int,int);
-  void step_reset(vector<CTable>&, int, int);
-  void step(vector<CTable>& , int);
-  void step_check(vector<CTable>&, int,int);
+  int attack(std::string,std::string,std::string,std::string,double,double,double,double,std::string,int,int);
+  int cluster(std::string,std::string,std::string,std::string,double,double,double,double,int,int,int);
+  int crap(std::string, double, double, double, int, int, int, std::string, int, int,int);
+  void step_reset(std::vector<CTable>&, int, int);
+  void step(std::vector<CTable>& , int);
+  void step_check(std::vector<CTable>&, int,int);
 
   Gtk::Table m_Table;
   Gtk::HBox m_Box0, m_Box1;
@@ -164,8 +168,8 @@ class MainWindow : public Gtk::Window
   AttackWindow a_TreeView; 
   CrapWindow c_TreeView; 
   int testi;
-  string file1;
-  string file2;
+  std::string file1;
+  std::string file2;
 
  private:
   MainWindow( const MainWindow& );

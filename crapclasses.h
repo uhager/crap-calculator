@@ -5,16 +5,8 @@
 #define CRAPCLASSES_H
 
 #include <vector>
-#include <fstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <iomanip>
-#include <math.h>
-#include <string.h>
-#include <sstream>
-#include <time.h>
-using namespace std;
+#include <string>
+
 #define AMU 931494.013
 #define M_e 510.998918
 
@@ -23,27 +15,27 @@ class CRef;
 class CIsotope
 {
   int A;
-  string elem;
+  std::string elem;
   double mass;
   double ME;
 
  public:
   CIsotope(){}
-  CIsotope(string row){make_isotope(row);}
-  CIsotope(string el, int a, double me){set_elem(el);set_A(a);set_ME(me);set_mass(a * AMU + me);}
+  CIsotope(std::string row){make_isotope(row);}
+  CIsotope(std::string el, int a, double me){set_elem(el);set_A(a);set_ME(me);set_mass(a * AMU + me);}
   CIsotope operator= (CIsotope isotope);
 
-  void make_isotope(string);
+  void make_isotope(std::string);
   void set_mass(double m) {mass=m;}
   void set_ME(double m) {ME=m;}
   void set_A(int a){A=a;}
-  void set_elem(string e){elem=e;}
-  string get_elem(){return elem;}
+  void set_elem(std::string e){elem=e;}
+  std::string get_elem(){return elem;}
   double get_mass(){return mass;}
   double get_ME(){return ME;}
   int get_A(){return A;}
-  string get_name();
-  void unmake_name(string);
+  std::string get_name();
+  void unmake_name(std::string);
   double calc_freq(CRef);
 };
 
@@ -51,40 +43,42 @@ class CRef : public CIsotope
 {
   friend class CMolecule;
 
-  string name;
+  std::string name;
   double freq;
  public:
   CRef(){}
-  CRef(string n, double f):
+  CRef(std::string n, double f):
     name(n),
     freq(f)
       {unmake_name(name);read_ame();}
   CRef(int a){set_A(a);}
   void read_ame();
-  void set_name(string n){name=n;unmake_name(name);read_ame();}
+  void set_name(std::string n){name=n;unmake_name(name);read_ame();}
   void set_freq(double f){freq=f;}
   double get_freq(){return freq;}
-  void make_ref(string);
+  void make_ref(std::string);
 };
 
 
 class CRead
 {
  public:
-  CRead(string fn){filename=fn;count_lines();}
+  CRead(std::string fn){filename=fn;count_lines();}
   CRead(){}
   void count_lines();
-  string read_line(int);
+  std::string read_line(int);
   int get_lines(){return lines;}
 
  private:
-  string filename;
+  std::string filename;
   int lines;
 };
 
+
+
 class CMolecule {
-  vector<CRef> cref;
-  string name;
+  std::vector<CRef> cref;
+  std::string name;
   double mass;
   //  double freq;
  public:
@@ -94,13 +88,13 @@ class CMolecule {
   CMolecule operator= (CMolecule molecule);
     double get_mass(){return mass;}
     double get_freq(CRef cref, int charge);
-    void unmake_mol(string);
-    string get_name(){return name;}
+    void unmake_mol(std::string);
+    std::string get_name(){return name;}
     int num(){return cref.size();}
-    CRef get_ref(int i){return cref.at(i);}
+    CRef& get_ref(int i){return cref.at(i);}
     void set_null(){name = "";mass = 0;}
 	void cluster(int);
-	void set_name(string n){name=n;}
+	void set_name(std::string n){name=n;}
 	void set_mass(double m){mass=m;}
 };
 
@@ -121,7 +115,7 @@ class CCont
     cont_freq_error(er),
 	count(num),
 	q(charge){}
-  void make_cont(string);
+  void make_cont(std::string);
   void make_masses(CRef);
   int get_count(){return count;}
   double get_lower(){return mass_lower;}
@@ -135,18 +129,17 @@ class CCont
 class CTable : public CIsotope
 {
   int high_limit;
-  string filename;
-  vector<CIsotope> isotope;
+  std::string filename;
+  std::vector<CIsotope> isotope;
   int linecount;
 
  public:
   CTable(): high_limit(257),filename("stable.asc"),linecount(0){}
 	CTable(int stable): high_limit(257),filename("stable.asc"),linecount(0){make_table(stable);}
 	CTable(const CTable& ctable): high_limit(ctable.high_limit),filename(ctable.filename),isotope(ctable.isotope),linecount(0){}
-//		CTable(vector<CIsotope> iso):isotope(iso){}
 	void make_table(int);
 	void ini_isotopes(double);
-	void set_iso(vector<CIsotope> iso, int i){isotope=iso;high_limit=i;}
+	void set_iso(std::vector<CIsotope> iso, int i){isotope=iso;high_limit=i;}
 	int get_line(){return linecount;}
 	void inc_line(){linecount++;}
 	void reset(){linecount=0;}
@@ -166,7 +159,7 @@ class CCalibrate
 
  public:
   CCalibrate(){}
-  CCalibrate(string iso1, string iso2, string iso3, string iso4, double f1, double f2, double t1, double t2):
+  CCalibrate(std::string iso1, std::string iso2, std::string iso3, std::string iso4, double f1, double f2, double t1, double t2):
     time1(t1), 
     time2(t2)
       {trap1.set_name(iso1);trap2.set_name(iso2);timing1.set_name(iso3);timing2.set_name(iso4);trap1.set_freq(f1); trap2.set_freq(f2);}
